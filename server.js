@@ -28,7 +28,7 @@ app.post('/', (req, res) => {
     console.error('Invalid request body:', req.body);
     return res.status(200).send(req.body);
   }
-  const userId = data.userId;
+  const userId = 45082970;
   // Construct the URL
   const url = `${clientConfig[userId].boardDomain}/boards/${data.boardId}/pulses/${data.pulseId}`;
 
