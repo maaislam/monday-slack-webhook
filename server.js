@@ -37,6 +37,7 @@ app.post('/', (req, res) => {
   const source = userIds[data.subscriptionId] || 'Unknown Source';
 
   const slackMessage = {
+    data: data,
     source: source,
     message: data.textBody,
     url: url,
