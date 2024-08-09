@@ -12,16 +12,15 @@ app.use(cors());
 // Parse incoming request bodies in JSON format
 app.use(bodyParser.json());
 
-// Slack Webhook URL (replace with your actual webhook URL)
-const slackWebhookUrl = 'https://hooks.slack.com/triggers/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';
-
-// Define sources based on subscriptionId
-const userIds = {
-  45082970: 'Luxury Flooring',
+const clientConfig = {
+  45082970: {
+    webhookUrl: 'https://hooks.slack.com/triggers/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',
+    source: 'Luxury Flooring',
+    boardDomain: 'https://convertex-digital-team.monday.com',
+  },
   12345678: 'Another Source',
   87654321: 'Yet Another Source',
 };
-
 app.post('/', (req, res) => {
   const data = req.body.event;
 
@@ -29,20 +28,21 @@ app.post('/', (req, res) => {
     console.error('Invalid request body:', req.body);
     return res.status(200).send(req.body);
   }
-
+  const userId = data.userId;
   // Construct the URL
-  const url = `https://convertex-digital-team.monday.com/boards/${data.boardId}/pulses/${data.pulseId}`;
+  const url = `${clientConfig[userId].boardDomain}/boards/${data.boardId}/pulses/${data.pulseId}`;
 
-  // Determine the source based on subscriptionId
-  const source = userIds[data.subscriptionId] || 'Unknown Source';
+  // Determine the source based on userId
+  const source = clientConfig[userId].source || 'Unknown Source';
+
+  const slackWebhookUrl = clientConfig[userId].webhookUrl;
 
   const slackMessage = {
-    data: data,
     source: source,
     message: data.textBody,
     url: url,
   };
-  console.log('🚀 ~ app.post ~ slackMessage:', slackMessage);
+  //console.log('🚀 ~ app.post ~ slackMessage:', slackMessage);
 
   axios
     .post(slackWebhookUrl, slackMessage)
