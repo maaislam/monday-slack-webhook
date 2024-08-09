@@ -16,9 +16,8 @@ app.use(bodyParser.json());
 const slackWebhookUrl = 'https://hooks.slack.com/triggers/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';
 
 // Define sources based on subscriptionId
-const sources = {
-  34953252: 'Luxury Flooring',
-  // Add more subscriptionId mappings here
+const userIds = {
+  45082970: 'Luxury Flooring',
   12345678: 'Another Source',
   87654321: 'Yet Another Source',
 };
@@ -26,11 +25,16 @@ const sources = {
 app.post('/', (req, res) => {
   const data = req.body.event;
 
+  if (!data) {
+    console.error('Invalid request body:', req.body);
+    return res.status(200).send(req.body);
+  }
+
   // Construct the URL
   const url = `https://convertex-digital-team.monday.com/boards/${data.boardId}/pulses/${data.pulseId}`;
 
   // Determine the source based on subscriptionId
-  const source = sources[data.subscriptionId] || 'Unknown Source';
+  const source = userIds[data.subscriptionId] || 'Unknown Source';
 
   const slackMessage = {
     source: source,
